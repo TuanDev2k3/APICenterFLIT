@@ -1,0 +1,150 @@
+﻿@using System.Security.Claims
+@using WebTinTucFLIC.Entities
+@{
+    ViewData["Title"] = "Comments";
+    var isAuthenticated = User.Identity!.IsAuthenticated;
+    var roleName = User.FindFirst(ClaimTypes.Role)?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@model List<NewsDTO>
+<div class="post-management">
+    <h2 class="page-title">Bình luận</h2>
+
+    <table class="post-table">
+        <thead>
+            <tr>
+				<th>STT</th>
+				<th>Hình ảnh</th>
+                <th>Tiêu đề</th>
+                <th>Ngày tạo</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = 1;
+            }
+            @foreach (var post in Model)
+            {
+                <tr>
+					<td>@i</td>
+					<td>
+						<img src="~/images/news/@post.ImageUrl" alt="@post.Title" class="post-image" />
+					</td>
+                    <td>@post.Title</td>
+                    <td>@post.PublishAt.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <a asp-action="Get" asp-controller="Comment" asp-route-id="@post.Id" asp-route-title="@post.TitleSlug" class="btn-view-comments btn">
+                            <i class="fas fa-pen-nib"></i>
+                            Bình luận
+                        </a>
+					</td>
+					
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination-container">
+        @for (int j = 1; j <= ViewBag.PageTotal; j++)
+        {
+            <a asp-action="P_List" asp-route-page="@j"
+               class="pagination-button @(ViewBag.CurrentPage == j ? "current-page" : "")">@j</a>
+        }
+    </div>
+</div>
+
+<style>
+    /* Định dạng tổng thể cho trang quản lý bài viết */
+    .post-management {
+        max-width: 1200px;
+        margin: 10px auto;
+        padding: 20px;
+        background-color: #f4f4f4;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    .page-title {
+        font-size: 26px;
+        font-weight: bold;
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    /* Định dạng cho bảng bài viết */
+    .post-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .post-table th, .post-table td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .post-table th {
+            background-color: #d9534f; 
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .post-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Định dạng cho các ô trong bảng */
+        .post-table td {
+            color: #333;
+        }
+
+            .post-table td:nth-child(1) { 
+                width: 5%;
+                text-align: center;
+            }
+
+            .post-table td:nth-child(2) { 
+                width: 15%;
+            }
+
+
+            .post-table td:nth-child(5) {
+                width: 13%;
+            } 
+
+    .post-image {
+        width: 100px; 
+        height: 80px;
+        border-radius: 4px;
+        object-fit: cover;
+    }
+
+
+    .btn-view-comments {
+        color: #fff;
+        background-color: #5cb85c;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-view-comments:hover {
+            background-color: #218838;
+            color: #fff;
+        }
+
+</style>
+
+<script>
+    const buttons = document.querySelectorAll('.pagination-button');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+            document.querySelector('.current-page').classList.remove('current-page');
+
+            this.classList.add('current-page');
+        });
+    });
+</script>

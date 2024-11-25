@@ -1,0 +1,69 @@
+﻿@using System.Security.Claims
+@using WebTinTucFLIC.Entities
+@{
+    ViewData["Title"] = "Nhật kí";
+    Layout = "_LayoutAdmin";
+    var isAuthenticated = User.Identity!.IsAuthenticated;
+    var roleName = User.FindFirst(ClaimTypes.Role)?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@model List<AccessLog>
+
+
+<div class="container-index">
+    <h2 class="title">Nhật kí hoạt động</h2>
+    <table class="post-table">
+        <thead>
+            <tr>
+                <th class="text-center">STT</th>
+                <th class="text-center">Tài khoản</th>
+                <th class="text-center">Mô tả</th>
+                <th class="text-center">Thiết bị</th>
+                <th class="text-center">Trình duyệt</th>
+                <th class="text-center">Thời gian</th>
+                <th class="text-center">Địa chỉ IP</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = 1;
+            }
+            @foreach (var log in Model)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@log.AccountName</td>
+                    <td>@log.Description</td>
+                    <td>@log.DeviceName</td>
+                    <td>@log.BrowersName</td>
+                    <td>@log.Timer.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                    <td>@log.IpAddress</td>
+                </tr>
+                i++;
+            }
+
+        </tbody>
+    </table>
+
+    <div class="pagination-container">
+        @for (int j = 1; j <= ViewBag.PageTotal; j++)
+        {
+            <a asp-action="P_List" asp-route-page="@j" class="pagination-button @(ViewBag.CurrentPage == j ? "current-page" : "")">@j</a>
+        }
+    </div>
+</div>
+
+
+<script>
+    const buttons = document.querySelectorAll('.pagination-button');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+            document.querySelector('.current-page').classList.remove('current-page');
+
+            this.classList.add('current-page');
+        });
+    });
+</script>

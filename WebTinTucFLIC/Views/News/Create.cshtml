@@ -1,0 +1,82 @@
+﻿@{
+    ViewData["Title"] = "Create";
+}
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@model NewsDTO
+<div class="container-create">
+    <h2>Thêm Tin Tức Mới</h2>
+
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div class="flex-container">
+            <div class="column-left">
+                <div class="form-group">
+                    <label asp-for="Title" for="Title">Tiêu đề bài viết</label>
+                    <input asp-for="Title" type="text" id="Title" name="Title" required value="@Model?.Title">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="NewTypeId" class="control-label">Thể loại</label>
+                            <select asp-for="NewTypeId" class="form-control">
+                                <option>Chọn thể loại</option>
+                                @foreach (var newtype in ViewBag.DsNewsType)
+                                {
+                                    <option value="@newtype.Id">@newtype.Title</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="PublishAt" class="control-label">Ngày xuất bản</label>
+                            <input asp-for="PublishAt" class="form-control" type="date" />
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="form-group">
+                    <label asp-for="Description" for="Description">Mô tả bài viết</label>
+                    <input asp-for="Description" type="text" id="Description" required value="@Model?.Description">
+                </div>
+            </div>
+
+            <div class="column-right">
+                <input type="file" id="imageFile" name="imageFile" data-plugins="dropify" accept="image/jpeg, image/png" onchange="previewImage(event)" title="Chọn hình đại diện">
+                <img id="imagePreview" src="#" alt="Ảnh sẽ hiển thị ở đây" style="display: none; max-width: 100%; max-height: 200px; height: 100%; background-size: cover; margin-top: 5px">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Detail" for="Detail">Nội dung bài viết</label>
+            <textarea asp-for="Detail" id="editor" placeholder="Text">@Model?.Detail</textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Đăng bài</button>
+    </form>
+
+    <div class="back-button">
+        <a asp-action="P_List">Quay lại danh sách bài viết</a>
+    </div>
+</div>
+<script>
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('imagePreview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                preview.src = e.target.result;  
+                preview.style.display = 'block';
+            };
+
+            reader.readAsDataURL(input.files[0]); 
+        }
+    }
+</script>

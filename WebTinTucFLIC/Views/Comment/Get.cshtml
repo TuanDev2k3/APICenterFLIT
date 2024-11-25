@@ -1,0 +1,207 @@
+﻿
+@{
+    ViewData["Title"] = "Get";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="post-details">
+    <div class="post-header">
+        <img src="~/images/news/@ViewBag.News.ImageUrl" alt="Post Image" class="post-image">
+        <div class="post-info">
+            <h2>@ViewBag.News.Title</h2>
+            <p class="post-category">Thể loại: <span>@ViewBag.News.NewsTypeName</span></p>
+        </div>
+    </div>
+    @* <p class="post-content">@ViewBag.News.Detail</p> *@
+    @* <p class="post-content">@Html.Raw(ViewBag.News.Detail)</p> *@
+</div>
+
+<div class="comments-section">
+    <h3>Bình luận của bài viết</h3>
+    @if (ViewBag.Comments.Count != 0)
+    {
+        foreach (var comment in ViewBag.Comments)
+        {
+            <div class="comment-item" id="comment-@comment.Id">
+                <div class="comment-header">
+                    <div class="comment-info">
+                        <img src="~/images/accounts/@comment.ImageURL" alt="User Avatar" class="comment-avatar">
+                        <div class="comment-text">
+                            <strong>@comment.AccountName</strong>
+                            <span class="comment-date">@comment.CommentAt.ToString("dd/MM/yyyy")</span>
+                        </div>
+                    </div>
+                    <a class="delete-comment" onclick="deleteComment(@comment.Id)">Xóa</a>
+                </div>
+                <p class="comment-detail">@comment.Detail</p>
+            </div>
+
+
+        }
+    }
+    else
+    {
+        <p class="no-comments">Chưa có bình luận nào</p>
+    }
+</div>
+
+
+<style>
+    /* Post Details Styles */
+    .post-details {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+        max-width: 800px;
+        margin: auto;
+    }
+
+    .post-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .post-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-right: 20px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .post-info h2 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .post-category {
+        font-size: 0.9em;
+        color: #666;
+    }
+
+        .post-category span {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+    .post-content {
+        font-size: 1em;
+        color: #555;
+        margin-top: 10px;
+    }
+
+    /* Comments Section Styles */
+    .comments-section {
+        max-width: 800px;
+        margin: 20px auto;
+    }
+
+    h3 {
+        color: #333;
+        font-size: 1.3em;
+        /* text-align: center; */
+        margin: 50px 0 20px;
+    }
+
+    /* Comment Item Styles */
+    .comment-item {
+        padding: 15px;
+        margin-bottom: 15px;
+        max-width: 800px;
+        margin: 0;
+        border-bottom: 1px solid gray;
+        transition: transform 0.2s;
+    }
+
+
+    /* Comment Header Styles */
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    /* Comment Info Styles */
+    .comment-info {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Avatar Styles */
+    .comment-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+    }
+
+    /* Comment Text Styles */
+    .comment-text {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .comment-text strong {
+            font-size: 1em;
+            color: #333;
+        }
+
+    .comment-date {
+        font-size: 0.85em;
+        color: #888;
+    }
+
+    /* Comment Detail Styles */
+    .comment-detail {
+        font-size: 1em;
+        color: #555;
+        margin: 0;
+    }
+
+    /* Delete Link Styles */
+    .delete-comment {
+        font-size: 0.85em;
+        color: #888;
+        width: 50px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: color 0.2s, opacity 0.2s;
+        opacity: 0.7;
+    }
+
+        .delete-comment:hover {
+            color: #e60000;
+            opacity: 1;
+        }
+</style>
+
+<script>
+    function deleteComment(commentId) {
+        if (confirm("Bạn có chắc chắn muốn xóa bình luận này không?")) {
+            $.ajax({
+                url: '/Comment/Delete',
+                type: 'POST',
+                data: { id: commentId },
+                success: function (response) {
+                    if (response.success) {
+                        $('#comment-' + commentId).remove();
+                    } else {
+                        alert("Không thể xóa bình luận: " + response.message);
+                    }
+                },
+                error: function () {
+                    alert("Đã xảy ra lỗi khi xóa bình luận.");
+                }
+            });
+        }
+    }
+
+</script>

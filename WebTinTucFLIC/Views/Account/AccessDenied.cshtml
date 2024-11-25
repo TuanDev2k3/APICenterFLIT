@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+    Layout = "_LayoutAccount";
+}
+
+<style>
+    .access-denied-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f8f9fa;
+    }
+
+    .access-denied-content {
+        text-align: center;
+        max-width: 400px;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+    }
+
+        .access-denied-content h1 {
+            font-size: 32px;
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+
+        .access-denied-content p {
+            font-size: 18px;
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+
+</style>
+
+<div class="access-denied-container">
+    <div class="access-denied-content">
+        <h1>403 - Truy cập bị từ chối</h1>
+        <p>Bạn không có quyền truy cập vào trang này.</p>
+        <a asp-action="LoginPage" asp-controller="Account" class="btn btn-danger">Quay lại trang đăng nhập</a>
+    </div>
+</div>

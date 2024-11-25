@@ -1,0 +1,137 @@
+@model List<NewsTypeDTO>
+@{
+    var isAuthenticated = User.Identity!.IsAuthenticated;
+}
+<header>
+    <!-- Header desktop -->
+    <div class="container-menu-desktop">
+
+
+        <!-- Header Mobile -->
+        <div class="wrap-header-mobile">
+            <!-- Logo moblie -->
+            <div class="logo-mobile">
+                <a href="index.html"><img src="~/imagess/icons/logo-01.png" alt="IMG-LOGO"></a>
+            </div>
+
+            <!-- Button show menu -->
+            <div class="btn-show-menu-mobile hamburger hamburger--squeeze m-r--8">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
+                </span>
+            </div>
+        </div>
+        <div style="position: relative; width: 100%; height: 150px;">
+
+            <a asp-controller="News" asp-action="Index" style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                <img src="~/imagess/banner-01.jpg" alt="IMG"
+                     style="width: 40%; object-fit: cover; object-position: top; height: 100%;">
+            </a>
+
+            <a asp-action="@(!isAuthenticated ? "LoginPage" : "Profile")" asp-controller="Account" class="btn btn-outline-danger"
+               style="position: absolute; top: 50%; right: 15%;" title="Đăng nhập ngay">
+                <i class="fas fa-sign-in-alt"></i>
+            </a>
+
+        </div>
+        <!-- Menu Mobile -->
+        <div class="menu-mobile">
+            <ul class="topbar-mobile">
+                <li class="left-topbar">
+                    <span class="left-topbar-item flex-wr-s-c">
+                        <span>
+                            Đồng Nai
+                        </span>
+
+                        <img class="m-b-1 m-rl-8" src="~/imagess/icons/icon-night.png" alt="IMG">
+
+                        <span>
+                            HI 58° LO 56°
+                        </span>
+                    </span>
+                </li>
+
+                <li class="left-topbar">
+
+
+                    <a href="#" class="left-topbar-item">
+                        Liên hệ
+                    </a>
+
+                    <a href="#" class="left-topbar-item">
+                        Log in
+                    </a>
+                </li>
+
+                <li class="right-topbar">
+                    <a href="#">
+                        <span class="fab fa-facebook-f"></span>
+                    </a>
+
+                    <a href="#">
+                        <span class="fab fa-twitter"></span>
+                    </a>
+
+                    <a href="#">
+                        <span class="fab fa-pinterest-p"></span>
+                    </a>
+
+                    <a href="#">
+                        <span class="fab fa-vimeo-v"></span>
+                    </a>
+
+                    <a href="#">
+                        <span class="fab fa-youtube"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        @* <!-- -->
+        <div class="wrap-logo container">
+        <!-- Logo desktop -->
+        <div class="logo">
+        <a href="index.html"><img src="~/imagess/icons/logo-01.png" alt="LOGO"></a>
+        </div>
+
+        <!-- Banner -->
+        <div class="banner-header">
+        <img src="imagess/banner-01.jpg" alt="IMG"
+        style="width: 100%; object-fit: cover; object-position:center;">
+        </div>
+        </div> *@
+
+        <!--  -->
+
+        <div class="wrap-main-nav">
+            <div class="main-nav">
+                <!-- Menu desktop -->
+                <nav class="menu-desktop">
+                    <a class="logo-stick">
+                        <img src="~/imagess/icons/logo-01.png" alt="LOGO">
+                    </a>
+                    <ul class="main-menu">
+                        @foreach (var parent in Model.Where(x => x.ParentId == 0))
+                        {
+                            <li class="main-menu-item">
+                                <a asp-controller="News" asp-action="Detail" asp-route-newtypeId="@parent.Id">@parent.Title</a>
+                                @if (Model.Any(x => x.ParentId == parent.Id))
+                                {
+                                    <ul class="sub-menu">
+                                        @foreach (var child in Model.Where(x => x.ParentId == parent.Id))
+                                        {
+                                            <li class="sub-menu-item">
+                                                <a asp-controller="News" asp-action="Detail" asp-route-newtypeId="@child.Id">@child.Title</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </li>
+                        }
+                    </ul>
+
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>

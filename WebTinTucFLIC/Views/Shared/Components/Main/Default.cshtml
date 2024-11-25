@@ -1,0 +1,87 @@
+﻿@model List<NewsDTO>
+<!-- Entertainment -->
+
+    <div class="tab01 p-b-20">
+        <div class="tab01-head how2 how2-cl1 bocl12 flex-s-c m-r-10 m-r-0-sr991">
+            <h3 class="f1-m-2 cl12 tab01-title">@ViewBag.NewsTypeName </h3>
+        </div>
+        <div class="tab-content p-t-35">
+            <div class="tab-pane fade show active" id="tab1-1" role="tabpanel">
+                @{
+                    var newsList = ViewBag.NewsData as List<NewsDTO>; // Ép kiểu danh sách
+                }
+
+                @if (newsList != null && newsList.Any()) // Kiểm tra xem ép kiểu có thành công và có phần tử
+                {
+                    var firstNews = newsList.First(); // Lấy tin đầu tiên
+
+                <div class="row">
+                    <div class="col-sm-6 p-r-25 p-r-15-sr991">
+                        <div class="m-b-30">
+                            <a asp-controller="News" asp-action="Blog" asp-route-id="@firstNews.Id"
+                               asp-route-t="@firstNews.TitleSlug"
+                               class="wrap-pic-w hov1 trans-03">
+                                <img src="/images/news/@firstNews.ImageUrl" alt="IMG" style="object-fit: cover;" />
+                            </a>
+                            <div class="p-t-20">
+                                <h5 class="p-b-5">
+                                    <a asp-controller="News" asp-action="Blog" asp-route-id="@firstNews.Id"
+                                       asp-route-t="@firstNews.TitleSlug" class="f1-m-3 cl2 hov-cl10 trans-03">
+                                        @firstNews.Title <!-- Hiển thị Title của tin đầu tiên -->
+                                    </a>
+                                </h5>
+
+                                <span class="cl8">
+                                    <span class="f1-s-3" style=" display: -webkit-box;
+                                            -webkit-line-clamp: 2;
+                                            -webkit-box-orient: vertical;
+                                            overflow: hidden;
+                                            text-overflow: ellipsis;
+                                            word-break: break-word;">
+                                        @firstNews.Description
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 p-r-25 p-r-15-sr991">
+                            <!-- Nếu bạn muốn hiển thị thêm tin khác, bạn có thể sử dụng vòng lặp -->
+                            @foreach (var item in newsList.Skip(1)) // Bỏ qua tin đầu tiên và lặp qua các tin còn lại
+                                @if (item.IsHot != 1)
+
+                                {
+                                    <div class="flex-wr-sb-s m-b-30">
+                                        <a asp-controller="News" asp-action="Blog" asp-route-id="@item.Id" asp-route-t="@item.TitleSlug"
+                                           class="size-w-1 wrap-pic-w hov1 trans-03">
+                                            <img src="/images/news/@item.ImageUrl" alt="IMG" />
+                                        </a>
+                                        <div class="size-w-2">
+                                            <h5 class="p-b-5">
+                                                <a asp-controller="News" asp-action="Blog" asp-route-id="@item.Id"
+                                                   asp-route-t="@item.TitleSlug" class="f1-s-5 cl3 hov-cl10 trans-03">
+                                                    @item.Title
+                                                </a>
+                                            </h5>
+                                            <span class="cl8">
+                                                <span class="f1-s-3" style=" display: -webkit-box;
+                        -webkit-line-clamp: 2;
+                        -webkit-box-orient: vertical;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        word-break: break-word;"> @item.Description </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                }
+
+                        </div>
+                </div>
+            }
+            else
+            {
+                <p class="text-center">Đang cập nhật ...</p>
+            }
+        </div>
+        </div>
+    </div>
+

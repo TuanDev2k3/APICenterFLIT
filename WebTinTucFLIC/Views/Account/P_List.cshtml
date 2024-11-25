@@ -1,0 +1,123 @@
+﻿@using System.Security.Claims
+@using WebTinTucFLIC.Entities
+@{
+    ViewData["Title"] = "Tài khoản";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var isAuthenticated = User.Identity!.IsAuthenticated;
+    var roleName = User.FindFirst(ClaimTypes.Role)?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@model List<AccountDTO>
+
+<div class="container-index">
+    <div>
+        <div class="form-group">
+            <h2 class="title">Quản lý người dùng</h2>
+        </div>
+        <div class="search-buttons">
+            <a asp-action="P_List" class="search-button">Tất cả</a>
+            @foreach (var item in ViewBag.DsAccountType)
+            {
+                <a asp-action="P_List" asp-route-page="1" asp-route-accountTypeId="@item.Id"
+                    class="search-button @(item.Id == ViewBag.SelectedAccountType ? "active" : "")">
+                    @item.Name
+                </a>
+            }
+            <a asp-action="P_List" asp-route-page="1" asp-route-status="1" class="search-button">
+                Còn hoạt động
+            </a>
+            <a asp-action="P_List" asp-route-page="1" asp-route-status="-1" class="search-button">
+                Đã bị khóa
+            </a>
+        </div>
+
+    </div>
+    <div class="add-post">
+        @if (roleName == "ADM")
+        {
+            <a asp-action="SignUpPage" asp-controller="Account" class="add-post-btn">
+                <i class="fas fa-plus icon text-right"></i>
+                <span class="text-left">Tạo tài khoản</span>
+            </a>
+        }
+
+    </div>
+    <table class="post-table">
+        <thead>
+            <tr>
+                <th class="text-center">STT</th>
+                <th class="text-center">Chức vụ</th>
+                <th class="text-center">Tên</th>
+                <th class="text-center">Email</th>
+                <th class="text-center">SDT</th>
+                <th class="text-center">Hình</th>
+                <th class="text-center">Chức năng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = 1;
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@item.AccountTypeName</td>
+                    <td>@item.Fullname</td>
+                    <td>@item.Email</td>
+                    <td>@item.Phone</td>
+
+                    <td>
+                        <img src="~/images/accounts/@item.ImageUrl" alt="Hình đại diện" />
+                    </td>
+                    <td>
+                        <div class="action-icons text-center">
+                            @if (roleName == "ADM")
+                            {
+                                <a asp-action="Lock" asp-route-id="@item.Id" class="text-red-400"
+                                    title="@(item.Status == 1 ? "Khóa tài khoản" : "Mở khóa tài khoản")"
+                                    onclick="return confirm('@(item.Status == 1 ? "Tài khoản này sẽ bị khóa vĩnh viễn !!" : "Tài khoản sẽ được hoạt động lại !!")')">
+
+                                    @if (item.Status == -1)
+                                    {
+                                        <i class="fas fa-lock"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-unlock"></i>
+                                    }
+                                </a>
+                            }
+                        </div>
+                    </td>
+                </tr>
+
+                i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination-container">
+        @for (int j = 1; j <= ViewBag.PageTotal; j++)
+        {
+            <a asp-action="P_List" asp-route-page="@j"
+                class="pagination-button @(ViewBag.CurrentPage == j ? "current-page" : "")">@j</a>
+        }
+    </div>
+
+</div>
+
+
+<script>
+    const buttons = document.querySelectorAll('.pagination-button');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+            document.querySelector('.current-page').classList.remove('current-page');
+
+            this.classList.add('current-page');
+        });
+    });
+
+</script>

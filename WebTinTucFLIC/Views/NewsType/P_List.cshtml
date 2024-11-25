@@ -1,0 +1,93 @@
+﻿@using System.Security.Claims
+@using WebTinTucFLIC.Entities
+@{
+    ViewData["Title"] = "NewsType";
+    Layout = "_LayoutAdmin";
+    var isAuthenticated = User.Identity!.IsAuthenticated;
+    var roleName = User.FindFirst(ClaimTypes.Role)?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@model List<NewsTypeDTO>
+
+
+<div class="container-index">
+    <h2 class="title">Quản lý danh mục</h2>
+    <div class="add-post">
+        @if (roleName == "ADM" || roleName == "UP")
+        {
+            <a asp-action="Create" asp-controller="NewsType" class="add-post-btn">
+                <i class="fas fa-plus icon text-right"></i>
+                <span class="text-left">Thêm danh mục</span>
+            </a>
+        }
+        
+    </div>
+    <table class="post-table">
+        <thead>
+            <tr>
+                <th class="text-center">STT</th>
+                <th class="text-center">Tên</th>
+                <th class="text-center">Đường dẫn</th>
+                <th class="text-center">Danh mục cha</th>
+                <th class="text-center">Hình</th>
+                <th class="text-center">Chức năng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = 1;
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@item.Title</td>
+                    <td>@item.TitleSlug</td>
+                    <td>@item.ParentName</td>
+                    <td>
+                        <img src="~/images/news/@item.ImageUrl" alt="Hình đại diện" />
+                    </td>
+                    <td>
+                        <div class="action-icons text-center">
+                            @if (roleName == "ADM" || roleName == "UP")
+                            {
+                                <a asp-action="Update" asp-route-id="@item.Id" class="text-gray-400" title="Sửa">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-400" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa không !!')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            }
+                            
+                        </div>
+                    </td>
+                </tr>
+
+                i++;
+            }
+
+        </tbody>
+    </table>
+
+    <div class="pagination-container">
+        @for (int j = 1; j <= ViewBag.PageTotal; j++)
+        {
+            <a asp-action="P_List" asp-route-page="@j" class="pagination-button @(ViewBag.CurrentPage == j ? "current-page" : "")">@j</a>
+        }
+    </div>
+</div>
+
+
+<script>
+    const buttons = document.querySelectorAll('.pagination-button');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+            document.querySelector('.current-page').classList.remove('current-page');
+
+            this.classList.add('current-page');
+        });
+    });
+</script>

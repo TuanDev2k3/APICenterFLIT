@@ -1,0 +1,161 @@
+﻿@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Review";
+    Layout = "_LayoutAdmin";
+    var roleName = User.FindFirst(ClaimTypes.Role)?.Value;
+}
+
+@model NewsDTO
+
+<div class="news-detail-container">
+    <h1 class="news-title">@Model.Title</h1>
+
+    <div class="news-meta">
+        <span class="news-date">
+            @Model.PublishAt.ToString("dd MMMM yyyy")
+        </span> |
+        <span class="news-author">
+            Tác giả: Ẩn danh
+        </span> |
+        <span class="news-category">
+            Loại tin tức: @Model.NewsTypeName
+        </span>
+    </div>
+
+    <h3 class="news-small-title">@Model.Description</h3>
+
+    <img src="~/images/news/@Model.ImageUrl" />
+
+    <div class="news-content">
+        @Html.Raw(Model.Detail) 
+    </div>
+
+    <div class="btn-chose">
+        @if(Model.Status == 0 && (roleName == "ADM" || roleName == "COD"))
+        {
+            <form asp-action="ChapNhanDuyetBai" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Id" />
+                <div class="switch-container">
+                    <input type="hidden" id="homepage" name="homepage" value="@(Model.HomePage == 1 ? "1" : "0")" />
+                    <div class="switch" onclick="toggleSwitch('homepage')">
+                        <div class="slider"></div>
+                    </div>
+                    <label for="homepage" class="label-text">Hiển thị trên trang chủ</label>
+                </div>
+
+                <div class="switch-container">
+                    <input type="hidden" id="isHot" name="isHot" value="@(Model.IsHot == 1 ? "1" : "0")" />
+                    <div class="switch" onclick="toggleSwitch('isHot')">
+                        <div class="slider"></div>
+                    </div>
+                    <label for="isHot" class="label-text">Tin nóng</label>
+                </div>
+                <button type="submit" class="btn btn-success">Chấp nhận bài viết</button>
+            </form>
+            <a asp-action="TuChoiDuyetBai" asp-route-id="@Model.Id" class="btn btn-danger">Từ chối bài viết</a>
+        }
+        <a asp-action="P_List" class="btn btn-dark">Quay lại</a>
+    </div>
+</div>
+
+<style>
+    .news-detail-container {
+        max-width: 900px;
+        margin: 20px auto;
+        padding: 30px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .news-title {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .news-small-title{
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .news-meta {
+        font-size: 14px;
+        color: #888;
+        margin-bottom: 20px;
+    }
+
+    .news-content {
+        font-size: 18px;
+        line-height: 1.6;
+        color: #333;
+        margin: 10px 0;
+    }
+
+    .btn-chose{
+        display: flex;
+        align-items: end;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 30px;
+        border-top: 2px solid #333;
+    }
+
+    /* form kiem duyet */
+
+    .switch-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .label-text {
+        margin-left: 10px;
+        font-size: 16px;
+    }
+
+    .switch {
+        position: relative;
+        width: 40px;
+        height: 20px;
+        background-color: #ccc;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-right: 10px;
+        box-shadow: 0 0 10px gray;
+    }
+
+    .slider {
+        position: absolute;
+        height: 18px;
+        width: 18px;
+        background-color: white;
+        border-radius: 50%;
+        top: 1px;
+        left: 1px;
+        transition: transform 0.3s;
+    }
+
+    .switch.active {
+        background-color: red;
+        box-shadow: 0 0 15px red;
+    }
+
+        .switch.active .slider {
+            transform: translateX(20px);
+        }
+
+</style>
+
+<script>
+    function toggleSwitch(inputId) {
+        const switchElement = document.querySelector(`.switch[onclick="toggleSwitch('${inputId}')"]`);
+        const hiddenInput = document.getElementById(inputId);
+
+        switchElement.classList.toggle("active");
+
+        hiddenInput.value = switchElement.classList.contains("active") ? "1" : "0";
+    }
+
+</script>

@@ -1,0 +1,294 @@
+@using WebTinTucFLIC.Entities
+@model Comment
+@{
+    var newsVM = ViewBag.NewVM;
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+<!-- Breadcrumb -->
+<div class="container">
+    <div class="headline bg0 flex-wr-sb-c p-rl-20 p-tb-8">
+        <div class="f2-s-1 p-r-30 m-tb-6">
+            <a class="breadcrumb-item f1-s-3 cl9" asp-controller="News" asp-action="Index">
+                Trang chủ
+            </a>
+
+            <a href="blog-list-01.html" class="breadcrumb-item f1-s-3 cl9">
+                @newsVM.SelectedNews.NewsTypeName
+            </a>
+        </div>
+
+        <div class="pos-relative size-a-2 bo-1-rad-22 of-hidden bocl11 m-tb-6">
+            <input class="f1-s-1 cl6 plh9 s-full p-l-25 p-r-45" type="text" name="search" placeholder="Tìm kiếm ">
+            <button class="flex-c-c size-a-1 ab-t-r fs-20 cl2 hov-cl10 trans-03">
+                <i class="zmdi zmdi-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<section class="bg0 p-b-140 p-t-10">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8 p-b-30">
+                <div class="p-r-10 p-r-0-sr991">
+                    <!-- Blog Detail -->
+                    <div class="p-b-70">
+                        <h3 class="f1-l-3 cl2 p-b-16 p-t-33 respon2">
+                            @newsVM.SelectedNews.Title
+                        </h3>
+
+                        <div class="flex-wr-s-s p-b-40" style="align-items: center;">
+                            <span class="f1-s-3 cl8 m-r-15">
+                                @* <a href="#" class="f1-s-4 cl8 hov-cl10 trans-03">
+                                by John Alvarado
+                                </a> *@
+
+                                @* <span class="m-rl-3">-</span> *@
+
+                                <span>
+                                @newsVM.SelectedNews.PublishAt.ToString("dd/MM/yyyy")
+                                </span>
+                            </span>
+
+                            <span class="f1-s-3 cl8 m-r-15" style="font-size: 13px;">
+                                0 <i class="fa-solid fa-eye"></i>
+                            </span>
+
+                            <a href="#" class="f1-s-3 cl8 hov-cl10 trans-03 m-r-15" style="font-size: 13px;">
+                                0 <i class="fa-solid fa-comment"></i>
+                            </a>
+                        </div>
+
+                        <h4 class="news-small-title">@newsVM.SelectedNews.Description</h4>
+
+                        <img src="~/images/news/@newsVM.SelectedNews.ImageUrl" style="width: 100%"/>
+
+                        @Html.Raw(newsVM.SelectedNews.Detail)
+
+
+                        <!-- Tag -->
+                        <div class="flex-s-s p-t-12 p-b-15">
+                        </div>
+
+                        <!-- Share -->
+                        <div class="flex-s-s">
+                            <span class="f1-s-12 cl5 p-t-1 m-r-15">
+                                Chia sẻ:
+                            </span>
+
+                            <div class="flex-wr-s-s size-w-0">
+                                <a href="#"
+                                   class="dis-block f1-s-13 cl0 bg-facebook borad-3 p-tb-4 p-rl-18 hov-btn1 m-r-3 m-b-3 trans-03">
+                                    <i class="fab fa-facebook-f m-r-7"></i>
+                                    Facebook
+                                </a>
+
+                                <a href="#"
+                                   class="dis-block f1-s-13 cl0 bg-twitter borad-3 p-tb-4 p-rl-18 hov-btn1 m-r-3 m-b-3 trans-03">
+                                    <i class="fab fa-twitter m-r-7"></i>
+                                    Twitter
+                                </a>
+
+                                <a href="#"
+                                   class="dis-block f1-s-13 cl0 bg-google borad-3 p-tb-4 p-rl-18 hov-btn1 m-r-3 m-b-3 trans-03">
+                                    <i class="fab fa-google-plus-g m-r-7"></i>
+                                    Google+
+                                </a>
+
+                                <a href="#"
+                                   class="dis-block f1-s-13 cl0 bg-pinterest borad-3 p-tb-4 p-rl-18 hov-btn1 m-r-3 m-b-3 trans-03">
+                                    <i class="fab fa-pinterest-p m-r-7"></i>
+                                    Pinterest
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Leave a comment -->
+                    <div>
+                        <h4 class="f1-l-4 cl3 p-b-12">
+                            Để lại một bình luận
+                        </h4>
+                        <form asp-action="Create" asp-controller="Comment" method="post">
+                            <input type="hidden" asp-for="NewId" value="@newsVM.SelectedNews.Id" />
+                            <textarea class="bo-1-rad-3 bocl13 size-a-15 f1-s-13 cl5 plh6 p-rl-18 p-tb-14 m-b-20"
+                                      asp-for="Detail" placeholder="Bình luận..."></textarea>
+                            <button type="submit" class="size-a-17 bg2 borad-3 f1-s-12 cl0 hov-btn1 trans-03 p-rl-15 m-t-10">
+                                Đăng bình luận
+                            </button>
+                        </form>
+                        <div id="comments-section">
+                            <h3>Bình luận của bài viết</h3>
+                            @if (ViewBag.Comments.Count != 0)
+                            {
+                                foreach (var comment in ViewBag.Comments)
+                                {
+                                    <div class="comment-item" id="comment-@comment.Id">
+                                        <div class="comment-header">
+                                            <div class="comment-info">
+                                                <img src="~/images/accounts/@comment.ImageURL" alt="User Avatar" class="comment-avatar">
+                                                <div class="comment-text">
+                                                    <strong>@comment.AccountName</strong>
+                                                    <span class="comment-date">@comment.CommentAt.ToString("dd/MM/yyyy")</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="comment-detail">@comment.Detail</p>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="no-comments">Chưa có bình luận nào</p>
+                            }
+                        </div>
+                    </div>
+
+                  
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-md-10 col-lg-4 p-b-30">
+                <div class="p-l-10 p-rl-0-sr991 p-t-70">
+
+
+                    <!-- Popular Posts -->
+                    <div class="p-b-30">
+                        <div class="how2 how2-cl4 flex-s-c">
+                            <h3 class="f1-m-2 cl3 tab01-title">
+                                Xem thêm
+                            </h3>
+                        </div>
+
+                        <ul class="p-t-35">
+                            @foreach (var item in newsVM.NewsList)
+                            {
+                                if (item.HomePage != 1)
+                                {
+                                    <li class="flex-wr-sb-s p-b-30">
+                                        <a href="#" class="size-w-10 wrap-pic-w hov1 trans-03">
+                                            <img src="~/images/news/@item.ImageUrl" alt="IMG">
+                                        </a>
+
+                                        <div class="size-w-11">
+                                            <h6 class="p-b-4">
+                                                <a href="blog-detail-02.html" class="f1-s-5 cl3 hov-cl10 trans-03">
+                                                    @item.Title
+                                                </a>
+                                            </h6>
+
+                                        </div>
+                                    </li>
+                                }
+                            }
+
+                        </ul>
+                        <!--  -->
+                        <div class="flex-c-s p-t-8">
+                            <a href="#"
+                               target="_blank">
+                                <img class="max-w-full" src="~/images/hinhPR.jpg" alt="IMG" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<div class="btn-back-to-top" id="myBtn">
+    <span class="symbol-btn-back-to-top">
+        <span class="fas fa-angle-up"></span>
+    </span>
+</div>
+
+<style>
+    #comments-section {
+        max-width: 800px;
+        margin: 20px auto;
+    }
+
+    h3 {
+        color: #333;
+        font-size: 1.5em;
+        /* text-align: center; */
+        margin: 50px 0 20px;
+    }
+
+    /* Comment Item Styles */
+    .comment-item {
+        padding: 15px;
+        margin-bottom: 15px;
+        max-width: 800px;
+        margin: 0;
+        border-bottom: 1px solid gray;
+        transition: transform 0.2s;
+    }
+
+
+    /* Comment Header Styles */
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    /* Comment Info Styles */
+    .comment-info {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Avatar Styles */
+    .comment-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+    }
+
+    /* Comment Text Styles */
+    .comment-text {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .comment-text strong {
+            font-size: 1em;
+            color: #333;
+        }
+
+    .comment-date {
+        font-size: 0.85em;
+        color: #888;
+    }
+
+    /* Comment Detail Styles */
+    .comment-detail {
+        font-size: 1em;
+        color: #555;
+        margin: 0;
+    }
+
+    .news-small-title {
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 10px;
+        text-transform: initial;
+    }
+   
+ </style>
+
+
+

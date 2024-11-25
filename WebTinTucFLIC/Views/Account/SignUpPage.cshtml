@@ -1,0 +1,95 @@
+﻿@model AccountDTO
+@{
+    Layout = "_LayoutAccount";
+    ViewData["CustomCSS"] = "stylesSignUp.css";
+}
+
+<div class="signup-container">
+    <div class="signup-box">
+        <h2>Đăng Ký Tài Khoản</h2>
+        <form asp-action="SignUpPage" method="post" asp-route-returnUrl="@ViewBag.ReturnUrl" enctype="multipart/form-data">
+            <div class="text-danger" asp-validation-summary="All"></div>
+            <div class="form-row">
+                <div class="form-column">
+                    <div class="input-group">
+                        <label asp-for="Fullname" for="fullname">Họ và Tên</label>
+                        <input asp-for="Fullname" type="text" id="fullname" name="fullname" required>
+                    </div>
+                    <div class="input-group">
+                        <label asp-for="Phone" for="phone">Số điện thoại</label>
+                        <input asp-for="Phone" type="text" id="phone" name="phone" required>
+                    </div>
+                    <div class="input-group">
+                        <label asp-for="Email" for="email">Email</label>
+                        <input asp-for="Email" type="email" id="email" name="email" required>
+                    </div>
+                    <div class="input-group">
+                        <label asp-for="Password" for="password">Mật khẩu</label>
+                        <input asp-for="Password" type="password" id="password" name="password" required>
+                    </div>
+                </div>
+
+                <div class="form-column">
+                    <div class="input-group">
+                        <label asp-for="UserName" for="username">Tên tài khoản</label>
+                        <input asp-for="UserName" type="text" id="username" name="username" required>
+                    </div>
+                    <div class="input-group">
+                        <label asp-for="AccountType" for="account-type">Loại tài khoản</label>
+                        <select asp-for="AccountType" id="account-type" required>
+                            @foreach (var item in ViewBag.DsAccountType)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label asp-for="ImageId" for="imageFile">Chọn hình đại diện</label>
+                        <input asp-for="ImageId" type="file" id="imageFile" name="imageFile" accept="image/jpeg, image/png" onchange="previewImage(event)">
+                        <input type="hidden" asp-for="ImageId" />
+@*                         <input type="hidden" name="CurrentImageUrl" value="@Model.ImageUrl" />
+ *@                     <img id="imagePreview" src="#" alt="Ảnh sẽ hiển thị ở đây" style="display: none; max-width: 100%; max-height: 200px; height: 100%; background-size: cover; margin-top: 5px">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="signup-btn">Đăng Ký</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('imagePreview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        // Nếu người dùng chọn file mới
+        if (event.target.files.length > 0) {
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    }
+
+
+    const passwordInput = document.getElementById('password');
+
+    passwordInput.addEventListener('focus', function () {
+        passwordInput.type = 'text';
+    });
+
+    passwordInput.addEventListener('blur', function () {
+        passwordInput.type = 'password';
+    });
+
+</script>
+
+

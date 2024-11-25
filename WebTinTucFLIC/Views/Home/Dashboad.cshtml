@@ -1,0 +1,297 @@
+﻿@{
+	ViewData["Title"] = "Dashboard";
+	Layout = "_LayoutAdmin";
+}
+
+<h2 class="dashboard-title">Trang Tổng Quan Của Trang Tin Tức</h2>
+<div class="main">
+    <div class="card">
+        <h3>Số lượng bài viết</h3>
+        <p>@ViewBag.NewCount bài viết</p> 
+        <canvas id="articlesBarChart" style="height: 400px;"></canvas>
+    </div>
+    <div class="card">
+        <h3>Bình luận mới nhất</h3>
+        <div class="comments">
+            @foreach (var item in ViewBag.DSComment)
+            {
+                <a asp-controller="Comment" asp-action="Get" asp-route-id="@item.NewId" title="Nguồn bình luận">
+                    <div class="comment-box">
+                        <div class="user-info">
+                            <img src="~/images/accounts/@item.ImageURL" alt="Avatar" class="avatar">
+                            <p class="user-name">@item.AccountName</p>
+                        </div>
+                        <p class="comment-content">@item.Detail</p>
+                    </div>
+                </a>
+            }
+            
+        </div>
+        <a class="btn" asp-action="P_List" asp-controller="Comment">Xem thêm</a>
+    </div>
+    <div class="card">
+        <h3>Bản tin nóng</h3>
+        <div class="news-container">
+            @foreach (var item in ViewBag.DSNewHots)
+            {
+                <div class="news-item">
+                    <img src="~/images/news/@item.ImageUrl" alt="Tin tức 1" class="news-image">
+                    <p class="news-title">@item.Title</p>
+                </div>
+            }
+           
+        </div>
+    </div>
+    
+</div>
+<div class="card" style="margin: 0 auto 20px; width: 97%">
+    <h3>Bài viết gần đây</h3>
+    <ul class="article-list">
+        @foreach (var item in ViewBag.DSLastNews)
+        {
+            <li class="article-item">
+                <div class="article-image">
+                    <img src="~/images/news/@item.ImageUrl" alt="@item.Title" />
+                </div>
+                <div class="article-content">
+                    <p class="article-title">@item.Title</p>
+                    <p class="article-category">@item.NewsTypeName</p>
+                </div>
+            </li> 
+        }
+    </ul>
+
+    <a class="btn" asp-action="P_List" asp-controller="News">Xem thêm</a>
+</div>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        display: flex;
+        justify-content: center;
+    }
+
+    .dashboard-title {
+        font-size: 2em; 
+        color: #000; 
+        text-align: center; 
+        margin: 20px 0; 
+        font-weight: bold; 
+        text-transform: uppercase; 
+        border-bottom: 2px solid #ccc; 
+        padding-bottom: 10px; 
+    }
+
+    .main {
+        padding: 20px;
+        flex-grow: 1;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3{
+            margin: 0 0 10px;
+            color: #28a745; /* Màu tiêu đề xanh lá */
+        }
+
+        .card p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+    .comments {
+        width: 100%;
+        max-width: 450px;
+        margin: 0 auto;
+        padding: 5px;        
+    }
+
+    .comment-box {
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 12px;
+        object-fit: cover;
+    }
+
+    .user-name {
+        font-weight: bold;
+        color: #333;
+        font-size: 1em;
+    }
+
+    .comment-content {
+        font-size: 0.9em;
+        color: #555;
+        margin: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+
+    .news-container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .news-item {
+        text-align: center;
+    }
+
+    .news-image {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .news-title {
+        margin-top: 8px;
+        font-size: 1em;
+        color: #333;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .article-list {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr); /* Chia thành 2 cột */
+        gap: 20px;
+        list-style: none;
+        padding: 0;
+    }
+
+    .article-item {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s;
+    }
+
+        .article-item:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+    .article-image {
+        width: 100%;
+        height: 150px;
+        overflow: hidden;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+        .article-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .article-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .article-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .article-category {
+        font-size: 14px;
+        color: #666;
+        margin-top: 5px;
+    }
+
+    .btn {
+        background-color: #28a745; /* Màu nút xanh lá */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: background 0.3s;
+        margin-top: 20px;
+    }
+
+        .btn:hover {
+            background-color: #218838; 
+            color: white;
+        }
+
+</style>
+
+<script>
+    const ctxBar = document.getElementById('articlesBarChart').getContext('2d');
+    const articlesBarChart = new Chart(ctxBar, {
+        type: 'bar', // Biểu đồ cột
+        data: {
+            labels: @Html.Raw(Json.Serialize(ViewBag.ListMonth)),
+            datasets: [{
+                label: 'Số lượng bài viết',
+                    data: @Html.Raw(Json.Serialize(ViewBag.ListCount)),
+                backgroundColor: 'rgba(40, 167, 69, 0.6)', 
+                borderColor: 'rgba(40, 167, 69, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true // Bắt đầu từ 0
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true // Hiện chú thích
+                }
+            }
+        }
+    });
+</script>

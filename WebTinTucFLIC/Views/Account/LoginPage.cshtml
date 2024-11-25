@@ -1,0 +1,32 @@
+﻿@model LoginModal
+@{
+    Layout = "_LayoutAccount";
+    ViewData["CustomCSS"] = "stylesLogin.css";
+}
+
+<div class="login-container">
+    <div class="login-box">
+        <h2>Đăng Nhập Tài Khoản</h2>
+        <form asp-action="Login" method="post" asp-route-returnUrl="@ViewBag.ReturnUrl" enctype="multipart/form-data">
+            <div class="text-danger" asp-validation-summary="All"></div>
+            <div class="input-group">
+                <label asp-for="UserName" for="username">Tên đăng nhập</label>
+                <input asp-for="UserName" type="text" name="username" required>
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="input-group">
+                <label asp-for="Password" for="password">Mật khẩu</label>
+                <input asp-for="Password" type="password" name="password" id="password" required>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <button type="submit" class="login-btn">Đăng nhập</button>
+        </form>
+        <div class="divider">
+            <span>hoặc</span>
+        </div>
+        <a href="/Account/LoginWithGoogle" class="google-btn">
+            <img src="~/images/logo-gg.jpg" alt="Google Logo">
+            Google
+        </a>
+    </div>
+</div>

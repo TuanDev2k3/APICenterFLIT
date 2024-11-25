@@ -1,0 +1,169 @@
+﻿@using System.Security.Claims
+@using WebTinTucFLIC.Entities
+@{
+    ViewData["Title"] = "News";
+    var isAuthenticated = User.Identity!.IsAuthenticated;
+    var roleName = User.FindFirst(ClaimTypes.Role)?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@model List<NewsDTO>
+<style>
+    .box-status {
+        padding: 5px 8px;
+        font-size: 13px;
+        display: inline;
+        text-align: center;
+        color: white;
+        border-radius: 10px;
+        font-family: 'roboto';
+        font-weight: 500;
+    }
+</style>
+<div class="container-index">
+    <div>
+        <div class="form-group">
+            <h2 class="title">Quản lý bài viết</h2>
+        </div>
+        <div class="search-buttons">
+            <a asp-action="P_List" class="search-button">Tất cả</a>
+            @foreach (var item in ViewBag.DsNewsType)
+            {
+                <a asp-action="P_List" asp-route-page="1" asp-route-newtypeId="@item.Id"
+                    class="search-button">
+                    @item.Title
+                </a>
+            }
+            @* @if(roleName == "ADM")
+            {
+                <a asp-action="P_List" asp-route-page="1" asp-route-review="true"
+                   class="search-button @(ViewBag.DsNewsType.Count+1 == ViewBag.SelectedNewsTypeId ? "active" : "")">
+                    Chưa duyệt
+                </a>
+            } *@
+        </div>
+
+    </div>
+    <div class="add-post">
+        @if (roleName == "ADM" || roleName == "UP")
+        {
+            <a asp-controller="News" asp-action="Create" class="add-post-btn">
+                <i class="fas fa-plus icon text-right"></i>
+                <span class="text-left">Thêm bài viết</span>
+            </a>
+        }
+
+    </div>
+    <table class="post-table">
+        <thead>
+            <tr>
+                <th class="text-center">STT</th>
+                <th class="text-center">Thể loại</th>
+                <th class="text-center">Tên</th>
+                <th class="text-center">Mô tả</th>
+                <th class="text-center">Trạng thái</th>
+                <th class="text-center">Hình</th>
+                <th class="text-center">Chức năng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = 1;
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@item.NewsTypeName</td>
+                    <td>@item.Title</td>
+                    <td>@item.Description</td>
+                    <td class="text-center">
+                        @if (item.Status == 1)
+                        {
+                            <div class="box-status" style="background: #008000;">Đã duyệt</div>
+                        }
+                        else if (item.Status == 2)
+                        {
+                            <div class="box-status" style="background: #dc143c;">Từ chối</div>
+                        }
+                        else if (item.Status == 0)
+                        {
+                            <div class="box-status" style="background: #ff8c00;">Chờ duyệt</div>
+                        }
+                        else if (item.Status == 3)
+                        {
+                            <div class="box-status" style="background: #9932cc ;">Lên lịch</div>
+                        }
+                    </td>
+                    <td>
+                        <img src="~/images/news/@item.ImageUrl" alt="Hình đại diện" />
+                    </td>
+                    <td>
+                        <div class="action-icons text-center">
+                            @if (roleName == "ADM" || roleName == "UP")
+                            {
+                                if (item.Status == 0 || roleName == "ADM")
+                                {
+                                    <a asp-action="Update" asp-route-id="@item.Id" asp-route-title="@item.TitleSlug" class="text-gray-400" title="Sửa">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                }
+                                <a asp-action="Review" asp-route-id="@item.Id" asp-route-title="@item.TitleSlug" class="text-gray-400" title="Xem trước">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-400" title="Xóa"
+                                    onclick="return confirm('Bạn có chắc chắn muốn xóa không !!')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            }
+                            else if (roleName == "COD")
+                            {
+                                <a asp-action="Review" asp-route-id="@item.Id" asp-route-title="@item.TitleSlug" class="text-gray-400" title="Xem trước">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            }
+                        </div>
+                    </td>
+                </tr>
+
+                i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination-container">
+        @for (int j = 1; j <= ViewBag.PageTotal; j++)
+        {
+            <a asp-action="P_List" asp-route-page="@j"
+               class="pagination-button @(ViewBag.CurrentPage == j ? "current-page" : "")">@j</a>
+
+        }
+    </div>
+
+</div>
+
+
+<script>
+    const buttons = document.querySelectorAll('.pagination-button');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+            document.querySelector('.current-page').classList.remove('current-page');
+
+            this.classList.add('current-page');
+        });
+    });
+
+
+    document.getElementById('newsTypeSelect').addEventListener('change', function () {
+        var newtypeId = this.value;
+        var url = '@Url.Action("P_List")';
+
+        if (newtypeId) {
+            window.location.href = url + '?page=1&newstypeId=' + newtypeId;
+        } else {
+            window.location.href = url;
+        }
+    });
+</script>
